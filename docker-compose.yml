@@ -3,7 +3,7 @@ version: '3.8'
 services:
   elasticsearch:
     build: 
-      context: ./docker/elasticsearch/
+      context: ./elasticsearch/
       dockerfile: Dockerfile
     container_name: yurudic-elasticsearch
     environment:
@@ -27,14 +27,14 @@ services:
 
   api:
     build:
-      context: ./docker/api/
+      context: ./api/
       dockerfile: Dockerfile
       target: dev
     container_name: yurudic-go
     tty: true
     stdin_open: true
     volumes:
-      - .:/go/src/app
+      - ./api/:/go/src/app
     ports:
       - 8080:8080
     depends_on:
