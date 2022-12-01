@@ -1,0 +1,67 @@
+{
+  "settings": {
+    "analysis": {
+      "filter":{
+        "my_splitfilter": {
+          "type": "sudachi_split",
+          "mode": "search"
+        },
+        "my_posfilter": {
+          "type":"sudachi_part_of_speech",
+          "stoptags":[
+            "助詞",
+            "助動詞",
+            "補助記号,句点",
+            "補助記号,読点"
+          ]
+        }
+      },
+      "tokenizer": {
+        "sudachi_tokenizer": {
+          "type": "sudachi_tokenizer",
+          "discard_punctuation": true,
+          "resources_path": "/usr/share/elasticsearch/config/sudachi/"
+        }
+      },
+      "analyzer": {
+        "sudachi_analyzer": {
+          "char_filter": ["icu_normalizer", "kuromoji_iteration_mark"],
+          "type": "custom",
+          "tokenizer": "sudachi_tokenizer",
+          "filter": [
+            "sudachi_ja_stop",
+            "sudachi_baseform",
+            "my_splitfilter",
+            "my_posfilter"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "word": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "sudachi_analyzer",
+        "search_analyzer": "standard"
+      },
+      "categories": {
+        "type": "nested",
+        "properties": {
+          "category_name": {
+            "type": "keyword"
+          },
+          "category_slug": {
+            "type": "keyword"
+          },
+          "category_id": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
