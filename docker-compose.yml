@@ -14,28 +14,38 @@ services:
       memlock:
         soft: -1
         hard: -1
+    expose:
+      - "9200"
     ports:
-      - 9200:9200
+      - "9200:9200"
+    networks:
+      - yurudic-dev-network
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
-    container_name: yurudic-kibana
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://es01:9200
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.10.1
+  #   container_name: yurudic-kibana
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://es01:9200
 
   api:
     build:
       context: ./api/
       dockerfile: Dockerfile
-      target: dev
+      target: go-dev
     container_name: yurudic-go
     tty: true
     stdin_open: true
     volumes:
-      - ./api/:/go/src/app
+      - .:/go/src/app
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       - elasticsearch
+    networks:
+      - yurudic-dev-network
+
+networks:
+  yurudic-dev-network:
+    driver: bridge

@@ -1,11 +1,11 @@
 {
-  "name": "Go devcontainer",
+  "name": "yurudic-api devcontainer",
   "dockerComposeFile": ["../docker-compose.yml"],
   "service": "api" ,
-  "workspaceFolder": "/go/src/app",
+  "workspaceFolder": "/go/src/app/api",
   "settings": {
     "go.toolsManagement.checkForUpdates": "off",
-    "go.gopath": "/go",
+    "go.gopath": "/home/vscode/go",
     "go.gocodeAutoBuild": true,
     "go.formatTool": "gofmt",
     "go.useLanguageServer": true,
@@ -17,4 +17,5 @@
   "extensions": [
     "golang.go"
   ]
+  //"onCreateCommand": "air -c .air.toml"
 }

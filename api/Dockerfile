@@ -1,21 +1,36 @@
-FROM golang:1.19-alpine as dev
+FROM mcr.microsoft.com/vscode/devcontainers/base:debian-11 as go-dev
+
+# install fish terminal
+RUN apt-get update && apt-get install -y \
+  fish \
+  && rm -rf /var/lib/apt/lists/*
+
+# install golang
+ARG GO_VERSION=1.19
+
+RUN set -x \
+  && curl -fsSL "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" | tar -xz -C /usr/local
+
+ENV PATH $PATH:/usr/local/go/bin
+ENV PATH $PATH:/home/vscode/go/bin
+ENV ELASTICSEARCH_URL=http://yurudic-elasticsearch:9200
 
 ENV ROOT=/go/src/app
-
 WORKDIR /go/src/app
 
-ENV CGO_ENABLED 0
-ENV ELASTICSEARCH_URL=http://localhost:9200
+# install go tools (for golang.go extention)
+# cgo depends on gcc
+RUN apt-get update && apt-get install -y \
+  gcc \
+  && rm -rf /var/lib/apt/lists/*
+ENV GOPATH=/home/vscode/go
+USER vscode
+RUN    go install -v golang.org/x/tools/gopls@latest \
+  && go install -v github.com/cweill/gotests/gotests@latest \
+  && go install -v github.com/fatih/gomodifytags@latest \
+  && go install -v github.com/josharian/impl@latest \
+  && go install -v github.com/haya14busa/goplay/cmd/goplay@latest \
+  && go install -v github.com/go-delve/delve/cmd/dlv@latest \
+  && go install -v honnef.co/go/tools/cmd/staticcheck@latest
 
-RUN apk update && apk add git gcc
 RUN go install -v github.com/cosmtrek/air@latest
-RUN go install -v golang.org/x/tools/gopls@latest
-RUN go install -v github.com/cweill/gotests/gotests@latest
-RUN go install -v github.com/josharian/impl@latest
-RUN go install -v github.com/haya14busa/goplay/cmd/goplay@latest
-RUN go install -v github.com/go-delve/delve/cmd/dlv@latest
-RUN go install -v honnef.co/go/tools/cmd/staticcheck@latest
-
-EXPOSE 8080
-
-CMD ["air", "-c", ".air.toml"]
