@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  yurudic-dev-network:
+    driver: bridge
+
 services:
   elasticsearch:
     build: 
@@ -39,6 +43,8 @@ services:
     stdin_open: true
     volumes:
       - .:/go/src/app
+    environment:
+      - ELASTICSEARCH_HOST=http://yurudic-elasticsearch:9200
     ports:
       - "8080:8080"
     depends_on:
@@ -46,6 +52,3 @@ services:
     networks:
       - yurudic-dev-network
 
-networks:
-  yurudic-dev-network:
-    driver: bridge

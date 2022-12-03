@@ -13,7 +13,6 @@ RUN set -x \
 
 ENV PATH $PATH:/usr/local/go/bin
 ENV PATH $PATH:/home/vscode/go/bin
-ENV ELASTICSEARCH_URL=http://yurudic-elasticsearch:9200
 
 ENV ROOT=/go/src/app
 WORKDIR /go/src/app
